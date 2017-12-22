@@ -17,7 +17,8 @@ extern int weak;
 
 
 static int frame_count=0;
-
+static int timer_count = 0;
+static unsigned int real_time = 150;
  int touch_valid = 0;
  int touching=0;
  unsigned int touch_x = 0;
@@ -55,7 +56,9 @@ void timer1InterruptServiceRoutine(void){
 
   //printf ("after clear VIC0IRQSTATUS= %x\n", VIC0IRQSTATUS_REG);
   frame_count++;
+  timer_count++;
 
+  //if(draw_timer <=0) //stop_game();
   if(frame_count>=70){
     if(!collide){
       //draw_background();
@@ -65,6 +68,10 @@ void timer1InterruptServiceRoutine(void){
     else
         stop++;
 
+
+	if (timer_count >= 100) {
+		draw_timer(real_time--);
+	}
     //stop monitor for moment
     if(stop>=3){
       stop=0;

@@ -558,3 +558,9 @@ int is_eat_life() {
 		}
 	}
 }
+
+void draw_time(int timer) {
+	draw_num(415, 10, timer / 100);
+	draw_num(415, 60, (timer / 10) % 10);
+	draw_num(415, 110, timer % 10);
+}
