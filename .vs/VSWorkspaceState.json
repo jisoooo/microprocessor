@@ -1,6 +1,7 @@
 {
   "ExpandedNodes": [
     "",
+    "\\include",
     "\\src"
   ],
   "SelectedNode": "\\src\\image.c",

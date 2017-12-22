@@ -2,22 +2,7 @@
 #include "image.h"
 #include <stdbool.h>
 
-
-enum background{BLACK_WALL, BLUE_WALL, SEED};
-enum color{BLACK = 0x0, BLUE = 0xFF, YELLOW = 0xFFFF00};
-
 unsigned int *phy_addr = FB_ADDR;
-struct player {
-	int col;
-	int row;
-	int state;
-};
-
-struct enemy {
-	int col;
-	int row;
-	int valid;
-};
 
 //cell 1°³ (800 * 480 ÀÇ 1Ä­)
 void draw_one_cell(int row, int col, int color) {
@@ -115,13 +100,13 @@ void move_player(struct player *p, int direction) {
 	draw_player(p);
 }
 
-bool collision_check(struct player *p){//, struct enemy **e) {
+int collision_check(struct player *p){//, struct enemy **e) {
 	/*take seed*/
 	if (map[p->row][p->col] == 2) {
 		map[p->row][p->col] = 0;
 		/*score update*/
 	}
-
+	return 0;
 	/*encounter enemy*/
 	/*
 	int i;

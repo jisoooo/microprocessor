@@ -1,4 +1,18 @@
 #include <stdio.h>
+enum background { BLACK_WALL, BLUE_WALL, SEED };
+enum color { BLACK = 0x0, BLUE = 0xFF, YELLOW = 0xFFFF00 };
+
+struct player {
+	int col;
+	int row;
+	int state;
+};
+
+struct enemy {
+	int col;
+	int row;
+	int valid;
+};
 
 int map[20][30] = {
 	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,
@@ -23,4 +37,10 @@ int map[20][30] = {
 	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1
 };
 
-void drawOneBlock(int row, int col, unsigned int color);
+void draw_one_cell(int row, int col, int color); 
+void draw_one_block(int row, int col, unsigned int color);
+void draw_background();
+void draw_seed(int i, int j);
+void draw_player(struct player *p);
+void move_player(struct player *p, int direction);
+int collision_check(struct player *p);
