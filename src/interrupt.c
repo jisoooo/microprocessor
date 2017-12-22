@@ -52,9 +52,12 @@ void timer1InterruptServiceRoutine(void){
 
   //printf ("after clear VIC0IRQSTATUS= %x\n", VIC0IRQSTATUS_REG);
   frame_count++;
+
   if(frame_count>=70){
-    if(!collide)
+    if(!collide){
+      move_enemy();
       move_player();
+    }
     else
         stop++;
   frame_count-=70;
