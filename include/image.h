@@ -4,7 +4,7 @@
 #include "item.h"
 #include "s3c6410.h"
 #define enemy_num (3)
-enum background { BLACK_WALL, BLUE_WALL, SEED};
+enum background { BLACK_WALL, BLUE_WALL, SEED, BELL, LIFE};
 enum color { BLACK = 0x0, BLUE = 0xFF, YELLOW = 0xFFFF00 };
 enum state{UP, DOWN, RIGHT, LEFT};
 
@@ -21,6 +21,7 @@ struct enemy {
 	int row;
 	int valid;
 	int state; //direction
+	int weak;
 };
 
 
@@ -34,6 +35,7 @@ void draw_player();
 void move_player();
 void move_enemy();
 int is_eat_seed();
+int is_eat_bell();
 int is_collide_wall(int, int);
 int is_collide_enemy();
 void draw_black();

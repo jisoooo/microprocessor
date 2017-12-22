@@ -16,13 +16,19 @@ extern unsigned int pac_right[20][20];
 extern unsigned int enemy_red[20][20];
 extern unsigned int enemy_purple[20][20];
 extern unsigned int enemy_green[20][20];
+extern unsigned int victim[20][20];
+
+extern unsigned int bell[20][20];
+extern unsigned int life[20][20];
 
 struct player player={1, 1, DOWN, 3, 0};
-struct enemy enemy_Red = {1, 5, 1, DOWN};
-struct enemy enemy_Green = {1, 10, 1, DOWN};
-struct enemy enemy_Purple = {1, 15, DOWN};
+struct enemy enemy_Red = {1, 5, 1, DOWN, 0, enemy_red};
+struct enemy enemy_Green = {1, 10, 1, DOWN, 0,enemy_green};
+struct enemy enemy_Purple = {1, 15, 1, DOWN, 0, enemy_purple};
 int score = 0;
 bool 	collide = false;
+
+int weak=0;// enemy get weak
 
 extern item button_Up;
 extern item button_Down;
@@ -77,6 +83,10 @@ void draw_background_initial()
         draw_one_block(i, j,0xFF);
       else if(map[i][j] == SEED)
         draw_seed(i, j);
+			else if(map[i][j] == BELL)
+				draw_bell(i,j);
+			else if(map[i][j]== LIFE);
+				//draw_life(i,j);
     }
 	}
 	draw_enemy();
@@ -127,6 +137,21 @@ void draw_seed(int row, int col) {
 		}
 	}
 }
+//draw bell
+void draw_bell(int row,int col){
+	int p, q;
+	draw_one_block(row, col, 0x0);
+	if (map[row][col] == BELL)
+	{
+		int i = row*20;
+		int j = col*20;
+		for (p = 0; p < 20; p++) {
+			for (q = 0 ; q < 20; q++)
+				draw_one_cell(p + i, q + j, bell[p][q]);
+		}
+	}
+
+}
 
 //draw player
 void draw_player() {
@@ -162,6 +187,7 @@ void draw_player() {
 		}
 	}
 }
+
 
 void move_player() {
 	int prev_row = player.row;
@@ -207,6 +233,8 @@ void move_player() {
 	is_eat_seed();
 	//check collision with enemy
 	is_collide_enemy();
+	//bell check
+	is_eat_bell();
 	/*draw new location*/
 	draw_player();
 }
@@ -214,50 +242,53 @@ void move_player() {
 
 
 void move_enemy() {
-	struct enemy enemy_arr[enemy_num] = { enemy_Green, enemy_Purple, enemy_Red };
+	struct enemy* enemy_arr[enemy_num] = { &enemy_Green, &enemy_Purple, &enemy_Red };
 	int prev_row, prev_col;
 	int i;
 	for (i = 0; i < enemy_num; i++) {
-		struct enemy enemy = enemy_arr[i];
-
+		struct enemy *enemy = enemy_arr[i];
+		prev_row = enemy->row;
+		prev_col = enemy->col;
 		//rand num
-		srand(time(NULL));
-		enemy.state = rand() % 4;
+		enemy->state = rand() % 4;
+		printf("rand num %d\n", enemy->state);
 
 		/*erase previous location*/
-		draw_one_block(enemy.row, enemy.col, BLACK);
+		draw_one_block(enemy->row, enemy->col, BLACK);
 		/*update location*/
-		switch (enemy.state) {
+		switch (enemy->state) {
 			case UP: //Up
 			{
-				if (enemy.row > 0)
-					(enemy.row)--;
+				if (enemy->row > 0)
+					(enemy->row)--;
 				break;
 			}
 			case DOWN:
 			{//Down
-				if (enemy.row < 19)
-					(enemy.row)++;
+				if (enemy->row < 19){
+					(enemy->row)++;
+					printf("Move Down!\n");
+				}
 				break;
 			}
 			case RIGHT: //Right
 			{
-				if (enemy.col < 29)
-					(enemy.col)++;
+				if (enemy->col < 29)
+					(enemy->col)++;
 				break;
 			}
 			case LEFT: //left
 			{
-				if (enemy.col > 0)
-					(enemy.col)--;
+				if (enemy->col > 0)
+					(enemy->col)--;
 				break;
 			}
 		}
 		//if collide wall, cancel movement
-		if (is_collide_wall(enemy.row, enemy.col)) {
+		if (is_collide_wall(enemy->row, enemy->col)) {
 			printf("collide!");
-			enemy.row = prev_row;
-			enemy.col = prev_col;
+			enemy->row = prev_row;
+			enemy->col = prev_col;
 		}
 
 		/*draw new location*/
@@ -337,57 +368,83 @@ void draw_char(int row, int col, int _char){
 
 /*draw enemy*/
 void draw_enemy() {
+	int row, col, i, j;
+	row = enemy_Red.row * 20;
+	col = enemy_Red.col * 20;
 
-	int row = enemy_Red.row * 20;
-	int col = enemy_Red.col * 20;
-  int i,j;
+  if(enemy_Red.valid){
+		for(i=0; i<20; i++){
+			for(j=0; j< 20; j++){
+				if(weak==0){
+				 draw_one_cell(row + i, col + j,enemy_red[i][j]);
+				 enemy_Red.weak=0;
 
-	for(i=0; i<20; i++){
-		for(j=0; j< 20; j++){
-			 draw_one_cell(row + i, col + j,enemy_red[i][j]);
+			  }
+				 else
+				 draw_one_cell(row + i, col + j,victim[i][j]);
+			 }
 		}
 	}
 
 	row = enemy_Purple.row * 20;
 	col = enemy_Purple.col * 20;
 
-	for(i=0; i<20; i++){
-		for(j=0; j< 20; j++){
-			 draw_one_cell(row + i, col + j,enemy_purple[i][j]);
+  if(enemy_Purple.valid){
+		for(i=0; i<20; i++){
+			for(j=0; j< 20; j++){
+				if(weak==0){
+				 draw_one_cell(row + i, col + j,enemy_purple[i][j]);
+				 enemy_Purple.weak=0;
+			  }
+				else
+				 draw_one_cell(row + i, col + j,victim[i][j]);
+			}
 		}
 	}
 
 	row = enemy_Green.row * 20;
 	col = enemy_Green.col * 20;
 
-	for(i=0; i<20; i++){
-		for(j=0; j< 20; j++){
-			 draw_one_cell(row + i, col + j,enemy_green[i][j]);
+	if(enemy_Green.valid){
+		for(i=0; i<20; i++){
+			for(j=0; j< 20; j++){
+				if(weak==0){
+				 draw_one_cell(row + i, col + j,enemy_green[i][j]);
+				 enemy_Green.weak=0;
+
+			  }
+				else
+				 draw_one_cell(row + i, col + j,victim[i][j]);
+			}
 		}
 	}
-
 }
 
 //check collision with enemy
-int is_collide_enemy()
-{
+int is_collide_enemy(){
 	int i;
 	collide = false;
-	struct enemy enemy_arr [enemy_num] = { enemy_Green, enemy_Purple, enemy_Red };
+	struct enemy* enemy_arr [enemy_num] = { &enemy_Green, &enemy_Purple, &enemy_Red };
 	for (i = 0; i < enemy_num; i++) {
-		if (enemy_arr[i].valid&&
-			enemy_arr[i].col == player.col &&
-			enemy_arr[i].row == player.row)
+		printf("is collide enemy in\n");
+		if (enemy_arr[i]->valid &&
+			enemy_arr[i]->col == player.col &&
+			enemy_arr[i]->row == player.row){
 			collide = true;
+			break;
+		}
 	}
 
 	if(collide){//collide
-		enemy_arr[i].valid=0;
-		if (player.power) {//bell eaten
+		printf("collide happened\n");
+		enemy_arr[i]->valid=0;
+		if (player.power == 1) {//bell eaten
+			printf("collide->update score\n");
 			score = score + 50;
 			update_score();
 		}
 		else {//enemy and pacman collide
+			printf("colllide->life down\n");
 			player.life--;
 			erase_one_life();
 			if (player.life <= 0)
@@ -396,6 +453,25 @@ int is_collide_enemy()
 		}
 	}
 }
+
+int is_eat_bell(){
+	int i=0;
+	if (map[player.row][player.col] == BELL) {
+		map[player.row][player.col] = 0;
+		weak=1;
+		player.power=1;
+		//for(i=0;i<enemy_num;i++)
+			enemy_Red.weak=weak;
+			enemy_Purple.weak=weak;
+			enemy_Green.weak=weak;
+
+		/*score update*/
+	}
+
+
+	return 0;
+}
+
 
 void erase_one_life()
 {

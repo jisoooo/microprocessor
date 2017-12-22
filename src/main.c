@@ -1,12 +1,15 @@
 #include "lcd.h"
 #include "interrupt.h"
 #include "vic.h"
+#include <time.h>
+#include <stdlib.h>
 //#include "item.h"
 //#include "img4.h"
 //#include "image.h"
 
 //extern unsigned int * player;
 int main(void){
+  srand(time(NULL));
 
    mango_uart_init(1, 115200);
 

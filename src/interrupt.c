@@ -7,11 +7,14 @@
 
 extern bool collide;
 static unsigned int stop=0;
+static unsigned int weak_time=0;
 
 unsigned int timer1_isr_call_count=0;
 unsigned int touch_isr_call_count = 0;
 
 extern struct player player;
+extern int weak;
+
 
 static int frame_count=0;
 
@@ -55,18 +58,31 @@ void timer1InterruptServiceRoutine(void){
 
   if(frame_count>=70){
     if(!collide){
-      move_enemy();
+      //draw_background();
       move_player();
+      move_enemy();
     }
     else
         stop++;
+
+    //stop monitor for moment
+    if(stop>=3){
+      stop=0;
+      collide=false;
+    }
+
+    if(weak){
+      weak_time++;
+      if(weak_time>=20){
+          weak_time=0;
+          weak=0;
+          player.power=0;
+        }
+    }
   frame_count-=70;
   }
 
-  if(stop>=3){
-    stop=0;
-    collide=false;
-  }
+
 
 
   //Enable other interrupts
