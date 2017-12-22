@@ -3,8 +3,10 @@
 #include "image.h"
 #include "itemlist.h"
 #include "action.h"
+#include <stdbool.h>
 
-extern item button_Up;
+extern bool collide;
+static unsigned int stop=0;
 
 unsigned int timer1_isr_call_count=0;
 unsigned int touch_isr_call_count = 0;
@@ -50,10 +52,19 @@ void timer1InterruptServiceRoutine(void){
 
   //printf ("after clear VIC0IRQSTATUS= %x\n", VIC0IRQSTATUS_REG);
   frame_count++;
-  if(frame_count>=100){
-  move_player();
-  frame_count-=100;
+  if(frame_count>=70){
+    if(!collide)
+      move_player();
+    else
+        stop++;
+  frame_count-=70;
   }
+
+  if(stop>=3){
+    stop=0;
+    collide=false;
+  }
+
 
   //Enable other interrupts
   VIC0INTENABLE_REG = temp;

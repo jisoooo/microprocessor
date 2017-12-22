@@ -2,6 +2,7 @@
 #include "image.h"
 #include "itemlist.h"
 #include <stdbool.h>
+#include "interrupt.h"
 
 extern int map[20][30];
 extern unsigned int pac_up[20][20];
@@ -13,11 +14,12 @@ extern unsigned int enemy_red[20][20];
 extern unsigned int enemy_purple[20][20];
 extern unsigned int enemy_green[20][20];
 
-struct player player={1, 1, DOWN, 3};
+struct player player={1, 1, DOWN, 3, 0};
 struct enemy enemy_Red = {1, 5, 1, DOWN};
 struct enemy enemy_Green = {1, 10, 1, DOWN};
 struct enemy enemy_Purple = {1, 15, DOWN};
 int score = 0;
+bool 	collide = false;
 
 extern item button_Up;
 extern item button_Down;
@@ -219,7 +221,7 @@ int is_eat_seed(){//, struct enemy **e) {
 	/*take seed*/
 	if (map[player.row][player.col] == 2) {
 		map[player.row][player.col] = 0;
-		score + = 5;
+		score+= 5;
 		update_score();
 		/*score update*/
 	}
@@ -312,22 +314,26 @@ void draw_enemy() {
 int is_collide_enemy()
 {
 	int i;
-	bool collide = false;
+	collide = false;
 	struct enemy enemy_arr [enemy_num] = { enemy_Green, enemy_Purple, enemy_Red };
 	for (i = 0; i < enemy_num; i++) {
-		if (enemy_arr[i].col == player.col ||enemy_arr[i].row == player.row)
+		if (enemy_arr[i].col == player.col &&enemy_arr[i].row == player.row)
 			collide = true;
 	}
 
-	if (player.power) {
-		score = score + 50;
-		update_score();
-	}
-	else {
-		player.life--;
-		erase_one_life();
-		if (playe.life <= 0)
-			//game_stop();
+	if(collide){
+		if (player.power) {
+			score = score + 50;
+			update_score();
+		}
+		else {
+			player.life--;
+			erase_one_life();
+
+			if (player.life <= 0)
+				printf("game over\n");
+				//game_stop();
+		}
 	}
 }
 
@@ -348,7 +354,7 @@ void erase_one_life()
 
 	for (i = 0; i < size; i++) {
 		for (j = 0; j < size; j++) {
-			draw_one_cell(row, col, BLACK);
+			draw_one_cell(row + i, col + j, BLACK);
 		}
 	}
 }
