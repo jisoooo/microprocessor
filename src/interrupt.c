@@ -5,6 +5,7 @@
 #include "action.h"
 #include <stdbool.h>
 
+unsigned int start;
 extern bool collide;
 static unsigned int stop=0;
 static unsigned int weak_time=0;
@@ -59,8 +60,8 @@ void timer1InterruptServiceRoutine(void){
   if(frame_count>=70){
     if(!collide){
       //draw_background();
-      move_player();
       move_enemy();
+      move_player();
     }
     else
         stop++;
@@ -81,6 +82,7 @@ void timer1InterruptServiceRoutine(void){
     }
   frame_count-=70;
   }
+
 
 
 
@@ -180,7 +182,8 @@ void touchInterruptServiceRoutine2(void){
 
 	/* Enable other interrupts */
 	VIC1INTENABLE_REG = temp;
-
+  if(!first)
+    start=1;
   //if touch is valid, move
 
    button_action();
@@ -243,34 +246,34 @@ void interrupt_reset(void){
 void mango_menu_main(void){
   int c;
 
-  while(1){
-    printf ("\nMain menu\n");
-    printf ("1> Enable interrupt\n");
-    printf ("2> Disable interrupt\n");
-	printf ("3> Touch Test\n");
-    printf ("x> Exit\n");
-    c = getchar();
-    printf ("\n%c is selected\n", c);
-
-    switch(c){
-      case '1':
-        enable_interrupts();
-        printf ("interrupt enabled\n");
-        break;
-      case '2':
-        disable_interrupts();
-        printf ("interrupt disabled\n");
-        break;
-	  case '3' :
-		//touch_test();
-		break;
-      case 'x':
-        interrupt_reset();
-        goto finished;
-      default:
-        printf ("Invalid button\n");
-    }
-  }
-  finished:
-    return;
+  // while(1){
+  //   printf ("\nMain menu\n");
+  //   printf ("1> Enable interrupt\n");
+  //   printf ("2> Disable interrupt\n");
+	// printf ("3> Touch Test\n");
+  //   printf ("x> Exit\n");
+  //   c = getchar();
+  //   printf ("\n%c is selected\n", c);
+  //
+  //   switch(c){
+  //     case '1':
+  //       enable_interrupts();
+  //       printf ("interrupt enabled\n");
+  //       break;
+  //     case '2':
+  //       disable_interrupts();
+  //       printf ("interrupt disabled\n");
+  //       break;
+	//   case '3' :
+	// 	//touch_test();
+	// 	break;
+  //     case 'x':
+  //       interrupt_reset();
+  //       goto finished;
+  //     default:
+  //       printf ("Invalid button\n");
+  //   }
+  // }
+  // finished:
+  //   return;
 }

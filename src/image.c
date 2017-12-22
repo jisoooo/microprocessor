@@ -245,11 +245,10 @@ void move_player() {
 	}
 	//seed check
 	is_eat_seed();
-	//check collision with enemy
-	is_collide_enemy();
-	//bell check
 	is_eat_bell();
 	is_eat_life();
+	//check collision with enemy
+	is_collide_enemy();
 	/*draw new location*/
 	draw_player();
 }
