@@ -14,6 +14,9 @@ int main(void){
   //gfx_init();
   mango_hw_init();
 
+  draw_start_map();
+  //interupt
+
   draw_background_initial();
   //draw_image(player_x,player_y,120,120,player);
   mango_menu_main();

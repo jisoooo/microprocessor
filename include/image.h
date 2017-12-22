@@ -43,4 +43,6 @@ void draw_char(int row, int col, int _char);
 void draw_enemy();
 void erase_one_life();
 void update_score();
+void draw_start_map();
+int is_collide_life();
 #endif

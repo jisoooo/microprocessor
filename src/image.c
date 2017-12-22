@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 extern int map[20][30];
+extern int start_map[20][30];
 extern unsigned int pac_up[20][20];
 extern unsigned int pac_down[20][20];
 extern unsigned int pac_left[20][20];
@@ -226,6 +227,11 @@ void move_enemy() {
 
 		/*erase previous location*/
 		draw_one_block(enemy.row, enemy.col, BLACK);
+		//if there was seed in enemy's previous position
+		if (map[enemy.row][enemy.col] == SEED) {
+			draw_seed(enemy.row,enemy.col);
+		}
+
 		/*update location*/
 		switch (enemy.state) {
 			case UP: //Up
@@ -259,7 +265,7 @@ void move_enemy() {
 			enemy.row = prev_row;
 			enemy.col = prev_col;
 		}
-
+		
 		/*draw new location*/
 		draw_enemy();
 	}//for end
@@ -427,4 +433,34 @@ void update_score()
 	draw_num(90, 630, h); //highest digit
 	draw_num(90, 680, m); //middle digit
 	draw_num(90, 730, l); //lowest digit
+}
+
+void draw_start_map() {
+	int i, j;
+	for (i = 0; i < 20; i++) {
+		for (j = 0; j < 30; j++) {
+			draw_one_block(i,j,start_map[i][j]);
+		}
+	}
+}
+
+int is_collide_life() {
+	if (map[player.row][player.col] == 4) {
+		map[player.row][player.col] = 0;
+		if (player.life == 0) {
+			(player.life)++;
+			draw_item(Heart3);
+		}
+		else if (player.life == 1) {
+			(player.life)++;
+			draw_item(Heart2);
+		}
+		else if (player.life == 2) {
+			(player.life)++;
+			draw_item(Heart1);
+		}
+		else if (player.life == 3) {
+			//do nothing
+		}
+	}
 }
