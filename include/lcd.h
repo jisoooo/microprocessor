@@ -60,6 +60,6 @@ void set_lcd_pos(int ltx, int lty, int rbx, int rby);
 void draw_image(item i);
 void init_background(void);
 void lcd_init();
-
+void draw_one_cell(int row, int col, int color);
 
 #endif

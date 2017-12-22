@@ -146,16 +146,26 @@ void touchInterruptServiceRoutine2(void){
 
   //if touch is valid, move
 
-  button_action();
+  //button_action();
     // if(touch==1)
     // {
     //     player_x+=20;
     // }
     // drawOneBlock(30,30, 0xFF0000);
+    //draw_black();
 
-    init_background();
-     draw_image(player);
-     draw_image(button_Up);
+    printf("before backgroud\n");
+
+    draw_background();
+    struct player* player;
+    player->col = 2;
+    player->row = 2;
+    player->state = UP;
+
+    draw_player(player);
+    //draw_background();
+     //draw_image(player);
+     //draw_image(button_Up);
 
 }
 

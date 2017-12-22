@@ -104,7 +104,7 @@ void set_lcd_pos(int ltx, int lty, int rbx, int rby){
   S3C_VIDOSD0B = S3C_VIDOSDxB_OSD_RBX_F(rbx- 1) |
     S3C_VIDOSDxB_OSD_RBY_F(rby- 1);
 }
-
+/*
 void draw_image(item it){
   unsigned int *phy_addr = FB_ADDR;
   int i, j, k;
@@ -125,11 +125,26 @@ void draw_image(item it){
    row = i/(it.h*3);
    col = (i%(it.w*3))/3;
 
-   phy_addr[(row+it.y)*800 + (col+it.x)]   = /*0xFFFF00;*/ ((it.data[i]<<16) | (it.data[i + 1] <<8)| (it.data[i+2]));
+   phy_addr[(row+it.y)*800 + (col+it.x)]   = //0xFFFF00; ((it.data[i]<<16) | (it.data[i + 1] <<8)| (it.data[i+2]));
   }
 
   set_wincon0_enable();
   set_vidcon0_enable();
+}*/
+
+void draw_one_cell(int row, int col, int color){
+  unsigned int *phy_addr = FB_ADDR;
+
+  S3C_VIDW00ADD0B0 = FB_ADDR; // Buffer Address
+  S3C_VIDW00ADD1B0 = S3C_VIDWxxADD1_VBASEL_F(FB_ADDR +
+    (PAGE_WIDTH + S3CFB_OFFSET) * S3CFB_VRES);
+  S3C_VIDW00ADD2  = S3C_VIDWxxADD2_OFFSIZE_F(S3CFB_OFFSET) |
+    S3C_VIDWxxADD2_PAGEWIDTH_F(PAGE_WIDTH);
+
+
+    phy_addr[row * 800 + col] = color;
+    set_wincon0_enable();
+    set_vidcon0_enable();
 }
 
 void init_background(void){
