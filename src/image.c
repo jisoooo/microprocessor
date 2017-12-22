@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 extern int map[20][30];
+extern int start_map[20][30];
 extern unsigned int pac_up[20][20];
 extern unsigned int pac_down[20][20];
 extern unsigned int pac_left[20][20];
@@ -85,8 +86,8 @@ void draw_background_initial()
         draw_seed(i, j);
 			else if(map[i][j] == BELL)
 				draw_bell(i,j);
-			else if(map[i][j]== LIFE);
-				//draw_life(i,j);
+			else if(map[i][j]== LIFE)
+				draw_life(i,j);
     }
 	}
 	draw_enemy();
@@ -150,7 +151,20 @@ void draw_bell(int row,int col){
 				draw_one_cell(p + i, q + j, bell[p][q]);
 		}
 	}
+}
 
+void draw_life(int row,int col){
+	int p, q;
+	draw_one_block(row, col, 0x0);
+	if (map[row][col] == LIFE)
+	{
+		int i = row*20;
+		int j = col*20;
+		for (p = 0; p < 20; p++) {
+			for (q = 0 ; q < 20; q++)
+				draw_one_cell(p + i, q + j, life[p][q]);
+		}
+	}
 }
 
 //draw player
@@ -235,6 +249,7 @@ void move_player() {
 	is_collide_enemy();
 	//bell check
 	is_eat_bell();
+	is_eat_life();
 	/*draw new location*/
 	draw_player();
 }
@@ -245,6 +260,7 @@ void move_enemy() {
 	struct enemy* enemy_arr[enemy_num] = { &enemy_Green, &enemy_Purple, &enemy_Red };
 	int prev_row, prev_col;
 	int i;
+	int value;
 	for (i = 0; i < enemy_num; i++) {
 		struct enemy *enemy = enemy_arr[i];
 		prev_row = enemy->row;
@@ -255,6 +271,18 @@ void move_enemy() {
 
 		/*erase previous location*/
 		draw_one_block(enemy->row, enemy->col, BLACK);
+
+		//if there was seed in enemy's previous position
+		value = map[enemy->row][enemy->col];
+		if (value == SEED) {
+			draw_seed(enemy->row,enemy->col);
+		}else if(value == LIFE){
+			draw_life(enemy->row,enemy->col);
+		}else if(value == BELL){
+			draw_bell(enemy->row,enemy->col);
+		}
+
+		/*update location*/
 		/*update location*/
 		switch (enemy->state) {
 			case UP: //Up
@@ -265,10 +293,8 @@ void move_enemy() {
 			}
 			case DOWN:
 			{//Down
-				if (enemy->row < 19){
+				if (enemy->row < 19)
 					(enemy->row)++;
-					printf("Move Down!\n");
-				}
 				break;
 			}
 			case RIGHT: //Right
@@ -467,8 +493,6 @@ int is_eat_bell(){
 
 		/*score update*/
 	}
-
-
 	return 0;
 }
 
@@ -503,4 +527,34 @@ void update_score()
 	draw_num(90, 630, h); //highest digit
 	draw_num(90, 680, m); //middle digit
 	draw_num(90, 730, l); //lowest digit
+}
+
+void draw_start_map() {
+	int i, j;
+	for (i = 0; i < 20; i++) {
+		for (j = 0; j < 30; j++) {
+			draw_one_block(i,j,start_map[i][j]);
+		}
+	}
+}
+
+int is_eat_life() {
+	if (map[player.row][player.col] == LIFE) {
+		map[player.row][player.col] = 0;
+		if (player.life == 0) {
+			(player.life)++;
+			draw_item(Heart1);
+		}
+		else if (player.life == 1) {
+			(player.life)++;
+			draw_item(Heart2);
+		}
+		else if (player.life == 2) {
+			(player.life)++;
+			draw_item(Heart3);
+		}
+		else if (player.life == 3) {
+			//do nothing
+		}
+	}
 }
