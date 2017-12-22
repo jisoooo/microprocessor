@@ -17,6 +17,7 @@ struct player player={1, 1, DOWN, 3};
 struct enemy enemy_Red = {1, 5, 1, DOWN};
 struct enemy enemy_Green = {1, 10, 1, DOWN};
 struct enemy enemy_Purple = {1, 15, DOWN};
+int score = 0;
 
 extern item button_Up;
 extern item button_Down;
@@ -91,10 +92,7 @@ void draw_background_initial()
 	draw_num(20, 745, 1); //level
 
 	/*print score*/
-	draw_num(90, 630, 1); //highest digit
-	draw_num(90, 680, 1); //middle digit
-	draw_num(90, 730, 1); //lowest digit
-
+	update_score();
 }
 
 void draw_background()
@@ -194,14 +192,16 @@ void move_player() {
 			break;
 		}
 	}
-	//collide war, cancel movement
+	//if collide wall, cancel movement
 	if(is_collide_wall()){
 		printf("collide!");
 		player.row = prev_row;
 		player.col = prev_col;
 	}
 	//seed check
-	collision_check();
+	is_eat_seed();
+	//check collision with enemy
+	is_collide_enemy();
 	/*draw new location*/
 	draw_player();
 }
@@ -215,10 +215,12 @@ int is_collide_wall()
 	return 0;
 }
 
-int collision_check(){//, struct enemy **e) {
+int is_eat_seed(){//, struct enemy **e) {
 	/*take seed*/
 	if (map[player.row][player.col] == 2) {
 		map[player.row][player.col] = 0;
+		score + = 5;
+		update_score();
 		/*score update*/
 	}
 	return 0;
@@ -304,4 +306,59 @@ void draw_enemy() {
 		}
 	}
 
+}
+
+//check collision with enemy
+int is_collide_enemy()
+{
+	int i;
+	bool collide = false;
+	struct enemy enemy_arr [enemy_num] = { enemy_Green, enemy_Purple, enemy_Red };
+	for (i = 0; i < enemy_num; i++) {
+		if (enemy_arr[i].col == player.col ||enemy_arr[i].row == player.row)
+			collide = true;
+	}
+
+	if (player.power) {
+		score = score + 50;
+		update_score();
+	}
+	else {
+		player.life--;
+		erase_one_life();
+		if (playe.life <= 0)
+			//game_stop();
+	}
+}
+
+void erase_one_life()
+{
+	int row = 160;
+	int col = 0;
+	int size = 60;
+	int life = player.life;
+	int i, j;
+
+	if (life == 0)
+		col = 605;
+	else if (life == 1)
+		col = 670;
+	else if (life == 2)
+		col = 735;
+
+	for (i = 0; i < size; i++) {
+		for (j = 0; j < size; j++) {
+			draw_one_cell(row, col, BLACK);
+		}
+	}
+}
+
+void update_score()
+{
+	int h = score / 100;
+	int m = (score % 100) / 10;
+	int l = score % 10;
+	draw_num(90, 630, h); //highest digit
+	draw_num(90, 680, m); //middle digit
+	draw_num(90, 730, l); //lowest digit
 }
