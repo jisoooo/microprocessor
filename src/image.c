@@ -2,6 +2,8 @@
 #include "image.h"
 #include "itemlist.h"
 #include <stdbool.h>
+#include <time.h>
+#include <stdlib.h>
 
 extern int map[20][30];
 extern unsigned int pac_up[20][20];
@@ -193,7 +195,7 @@ void move_player() {
 		}
 	}
 	//if collide wall, cancel movement
-	if(is_collide_wall()){
+	if(is_collide_wall(player.row, player.col)){
 		printf("collide!");
 		player.row = prev_row;
 		player.col = prev_col;
@@ -206,11 +208,65 @@ void move_player() {
 	draw_player();
 }
 
+
+
+void move_enemy() {
+	struct enemy enemy_arr[enemy_num] = { enemy_Green, enemy_Purple, enemy_Red };
+	int prev_row, prev_col;
+	int i;
+	for (i = 0; i < enemy_num; i++) {
+		struct enemy enemy = enemy_arr[i];
+
+		//rand num
+		srand(time(NULL));  
+		enemy.state = rand() % 4;
+
+		/*erase previous location*/
+		draw_one_block(enemy.row, enemy.col, BLACK);
+		/*update location*/
+		switch (enemy.state) {
+			case UP: //Up
+			{
+				if (enemy.row > 0)
+					(enemy.row)--;
+				break;
+			}
+			case DOWN:
+			{//Down
+				if (enemy.row < 19)
+					(enemy.row)++;
+				break;
+			}
+			case RIGHT: //Right
+			{
+				if (enemy.col < 29)
+					(enemy.col)++;
+				break;
+			}
+			case LEFT: //left
+			{
+				if (enemy.col > 0)
+					(enemy.col)--;
+				break;
+			}
+		}
+		//if collide wall, cancel movement
+		if (is_collide_wall(enemy.row, enemy.col)) {
+			printf("collide!");
+			enemy.row = prev_row;
+			enemy.col = prev_col;
+		}
+
+		/*draw new location*/
+		draw_enemy();
+	}//for end
+}
+
 //Check if it collide wall
-int is_collide_wall()
+int is_collide_wall(int row, int col)
 {
-	int value = map[player.row][player.col];
-	if(value == 1)
+	int value = map[row][col];
+	if (value == 1)
 		return 1;
 	return 0;
 }
@@ -219,7 +275,7 @@ int is_eat_seed(){//, struct enemy **e) {
 	/*take seed*/
 	if (map[player.row][player.col] == 2) {
 		map[player.row][player.col] = 0;
-		score + = 5;
+		score +=5;
 		update_score();
 		/*score update*/
 	}

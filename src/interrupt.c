@@ -51,6 +51,7 @@ void timer1InterruptServiceRoutine(void){
   //printf ("after clear VIC0IRQSTATUS= %x\n", VIC0IRQSTATUS_REG);
   frame_count++;
   if(frame_count>=100){
+	  move_enemy();
   move_player();
   frame_count-=100;
   }
