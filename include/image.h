@@ -33,4 +33,7 @@ void move_player();
 int collision_check();
 void draw_black();
 void draw_background_initial();
+void draw_num(int row, int col, int num);
+void draw_char(int row, int col, int _char);
+void draw_enemy();
 #endif

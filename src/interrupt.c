@@ -142,7 +142,6 @@ void touchInterruptServiceRoutine2(void){
 	else
 		touch_valid = 1;
 
-  printf("(%d, %d, %d)\n", touch_x, touch_y, touch_valid);
 
 	//printf("(%f, %f)\n", (float)x, (float)y);
 
@@ -154,7 +153,7 @@ void touchInterruptServiceRoutine2(void){
 
   //if touch is valid, move
 
-  //button_action();
+   button_action();
     // if(touch==1)
     // {
     //     player_x+=20;
