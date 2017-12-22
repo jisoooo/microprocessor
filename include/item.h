@@ -1,7 +1,6 @@
 #ifndef ITEM
 #define ITEM
 #include <stdio.h>
-
 typedef struct{
   unsigned int x;
   unsigned int y;

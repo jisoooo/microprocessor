@@ -5,10 +5,13 @@
 #include "action.h"
 
 extern item button_Up;
-extern item player;
 
 unsigned int timer1_isr_call_count=0;
 unsigned int touch_isr_call_count = 0;
+
+extern struct player player;
+
+static int frame_count=0;
 
  int touch_valid = 0;
  int touching=0;
@@ -46,6 +49,11 @@ void timer1InterruptServiceRoutine(void){
   VIC0IRQSTATUS_REG |= BIT_TIMER1;
 
   //printf ("after clear VIC0IRQSTATUS= %x\n", VIC0IRQSTATUS_REG);
+  frame_count++;
+  if(frame_count>=100){
+  move_player();
+  frame_count-=100;
+  }
 
   //Enable other interrupts
   VIC0INTENABLE_REG = temp;
@@ -154,15 +162,7 @@ void touchInterruptServiceRoutine2(void){
     // drawOneBlock(30,30, 0xFF0000);
     //draw_black();
 
-    printf("before backgroud\n");
 
-    draw_background();
-    struct player* player;
-    player->col = 2;
-    player->row = 2;
-    player->state = UP;
-
-    draw_player(player);
     //draw_background();
      //draw_image(player);
      //draw_image(button_Up);
