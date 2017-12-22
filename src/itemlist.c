@@ -10,5 +10,4 @@ item Heart1= {160,605, 60, 60, heart};
 item Heart2= {160,670, 60, 60, heart};
 item Heart3= {160,735, 60, 60, heart};
 
-
 // item player={300,300, 120,120,  temp_player};

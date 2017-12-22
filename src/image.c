@@ -177,14 +177,16 @@ void move_player() {
 			break;
 		}
 	}
-	//collide war, cancel movement
+	//if collide wall, cancel movement
 	if(is_collide_wall()){
 		printf("collide!");
 		player.row = prev_row;
 		player.col = prev_col;
 	}
 	//seed check
-	collision_check();
+	is_eat_seed();
+	//check collision with enemy
+	is_collide_enemy();
 	/*draw new location*/
 	draw_player();
 }
@@ -198,10 +200,11 @@ int is_collide_wall()
 	return 0;
 }
 
-int collision_check(){//, struct enemy **e) {
+int is_eat_seed(){//, struct enemy **e) {
 	/*take seed*/
 	if (map[player.row][player.col] == 2) {
 		map[player.row][player.col] = 0;
+		score + = 10;
 		/*score update*/
 	}
 	return 0;
@@ -216,3 +219,49 @@ int collision_check(){//, struct enemy **e) {
 		}
 	}*/
 }
+
+//check collision with enemy
+int is_collide_enemy()
+{
+	int i;
+	bool collide = false;
+	struct enemy enemy_arr [enemy_num] = { enemy_Green, enemy_Purple, enemy_Red };
+	for (i = 0; i < enemy_num; i++) {
+		if (enemy_arr[i].col == player.col ||enemy_arr[i].row == player.row)
+			collide = true;
+	}
+
+	if (player.power) {
+		score = score + 200;
+	}
+	else {
+		player.life--;
+		erase_one_life();
+		if (playe.life <= 0)
+			//game_stop();
+	}
+}
+
+void erase_one_life()
+{
+	int row = 160;
+	int col = 0;
+	int size = 60;
+	int life = player.life;
+	int i, j;
+
+	if (life == 0)
+		col = 605;
+	else if (life == 1)
+		col = 670;
+	else if (life == 2)
+		col = 735;
+
+	for (i = 0; i < size; i++) {
+		for (j = 0; j < size; j++) {
+			draw_one_cell(row, col, BLACK);
+		}
+	}
+}
+
+
