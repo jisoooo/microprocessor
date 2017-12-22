@@ -105,12 +105,10 @@ void set_lcd_pos(int ltx, int lty, int rbx, int rby){
     S3C_VIDOSDxB_OSD_RBY_F(rby- 1);
 }
 
-void draw_image(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int *data){
+void draw_image(item it){
   unsigned int *phy_addr = FB_ADDR;
   int i, j, k;
   int hbase, vbase;
-   w=120;
-   h=120;
   int col, row;
   int temp;
 
@@ -122,12 +120,12 @@ void draw_image(unsigned int x, unsigned int y, unsigned int w, unsigned int h, 
 
 
 
-  for(i=0; i<w*h*3 ; i+=3){
+  for(i=0; i<it.w*it.h*3 ; i+=3){
 
-   row = i/(h*3);
-   col = (i%(w*3))/3;
+   row = i/(it.h*3);
+   col = (i%(it.w*3))/3;
 
-   phy_addr[(row+y)*800 + (col+x)]   = /*0xFFFF00;*/ ((data[i]<<16) | (data[i + 1] <<8)| (data[i+2]));
+   phy_addr[(row+it.y)*800 + (col+it.x)]   = /*0xFFFF00;*/ ((it.data[i]<<16) | (it.data[i + 1] <<8)| (it.data[i+2]));
   }
 
   set_wincon0_enable();

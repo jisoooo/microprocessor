@@ -15,6 +15,9 @@ OBJ=\
 	$(OUTDIR)/s3c_uart.o \
 	$(OUTDIR)/interrupt.o\
 	$(OUTDIR)/support.o\
+	$(OUTDIR)/item.o\
+	$(OUTDIR)/itemlist.o\
+	$(OUTDIR)/action.o\
 	$(OUTDIR)/image.o\
 
 CFLAGS64=-DCONFIG_MANGO_64

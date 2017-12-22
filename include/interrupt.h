@@ -34,6 +34,9 @@
 #define BIT_TIMER1_STAT (1<<6)
 #define BIT_TIMER1_EN (1<<1)
 
+//Global variable
+
+//end of global var
 
 void enable_interrupts(void);
 

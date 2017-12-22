@@ -1,16 +1,19 @@
 #include "interrupt.h"
 #include "lcd.h"
 #include "image.h"
-int player_x=50;
-int player_y=50;
+#include "itemlist.h"
+#include "action.h"
 
-extern unsigned int * player;
+extern item button_Up;
+extern item player;
+
 unsigned int timer1_isr_call_count=0;
 unsigned int touch_isr_call_count = 0;
 
-static int touch_valid = 0;
-static float touch_x = 0.0;
-static float touch_y = 0.0;
+ int touch_valid = 0;
+ int touching=0;
+ unsigned int touch_x = 0;
+ unsigned int touch_y = 0;
 
 //enable interrupt in CPU level
 void enable_interrupts(void){
@@ -29,7 +32,6 @@ void disable_interrupts(void){
 //Interrupt Service Routine for Timer1
 void timer1InterruptServiceRoutine(void){
   unsigned int temp;
-
   //Disable any other interrupt
   temp = VIC0INTENABLE_REG;
   VIC0INTENCLEAR_REG = 0xffffffff;
@@ -78,8 +80,11 @@ void touchInterruptServiceRoutine(void){
 	unsigned int temp;
 	unsigned int temp2;
 
-	if( !(VIC1RAWINTR_REG & 1<<30) )
-		return;
+	if( !(VIC1RAWINTR_REG & 1<<30) ){
+    touching=0;
+  	return;
+  }
+    touching =1;
 
 	/* Disable any other interrupt */
 	temp = VIC1INTENABLE_REG;
@@ -105,7 +110,8 @@ void touchInterruptServiceRoutine2(void){
 	unsigned int x, y;
 
 	if( !(VIC1RAWINTR_REG & 1<<31) ){
-    touch_valid=0;
+
+    //touch_valid=0;
     //printf("touch valid value: %d \n", touch_valid);
     return;
 
@@ -117,16 +123,18 @@ void touchInterruptServiceRoutine2(void){
 
 	while( !(readl(ADCCON) & 1<<15) );//detect axis conversion finish
 
-	x = readl(ADCDAT0) & 0x3ff - 200;
-	y = readl(ADCDAT1) & 0x3ff -340;
+	x = readl(ADCDAT0) & 0x3ff ;
+	y = readl(ADCDAT1) & 0x3ff ;
 
-	x = ((x - 200) * 800 / 640 / 2);
-	y = ((y - 340) * 480 / 360 / 2);
+	touch_x = ((x - 200) * 800 / 640 );
+	touch_y = ((y - 340) * 480 / 360 );
+
 	if (first)
 		first = 0;
 	else
 		touch_valid = 1;
-  printf("(%d, %d, %d)\n", x, y, touch_valid);
+
+  printf("(%d, %d, %d)\n", touch_x, touch_y, touch_valid);
 
 	//printf("(%f, %f)\n", (float)x, (float)y);
 
@@ -137,14 +145,17 @@ void touchInterruptServiceRoutine2(void){
 	VIC1INTENABLE_REG = temp;
 
   //if touch is valid, move
-    if(touch_valid==1)
-    {
-        player_x+=20;
-    }
 
-    //init_background();
-    drawOneBlock(30,30, 0xFF0000);
-    // draw_image(player_x,player_y,120,120,player);
+  button_action();
+    // if(touch==1)
+    // {
+    //     player_x+=20;
+    // }
+    // drawOneBlock(30,30, 0xFF0000);
+
+    init_background();
+     draw_image(player);
+     draw_image(button_Up);
 
 }
 

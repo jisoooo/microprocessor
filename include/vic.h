@@ -1,4 +1,4 @@
-#ifdef VIC
+#ifndef VIC
 #define VIC
 
 #define VIC0IRQSTATUS_REG __REG(ELFIN_VIC0_BASE_ADDR + 0x0)

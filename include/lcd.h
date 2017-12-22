@@ -2,7 +2,8 @@
 #define __LCD_H
 
 #include <stdio.h>
-
+#include "item.h"
+#include "action.h"
 #include "graphics.h"
 #include "s3c_uart.h"
 #include "s3c6410.h"
@@ -56,8 +57,9 @@ void set_vidcon0_enable(void);
 
 void set_lcd_pos(int ltx, int lty, int rbx, int rby);
 
-void draw_image(unsigned int x, unsigned int y, unsigned int w, unsigned int h,unsigned int *d);
+void draw_image(item i);
 void init_background(void);
 void lcd_init();
+
 
 #endif
