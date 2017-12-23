@@ -12,12 +12,27 @@ Members
 
 How to Compile
 -----------
- - make file
+ - Go to top directory
+ - Command 'make' will build 'project' in Debug directory.
+ - Command 'make clean' will erase 'project'
+ - Thus type make in command line. 
 
 How to Start Game
 -------------------
-The goal of our team project is to develop an Eclipse plugin that calculates a set of software metrics a
+ - Type 'sudo minicom -s' in command line
+ - Type 'loady' in command line
+ - Press 'Ctrl + A + S'
+ - Select ymodem
+ - Go to Debug directory where 'project' was made with 'make' command
+ - Type bootelf in command line
+ - Start Screen will appear
 
 How to Play game
 -------------------
-The goal of our team project is to develop an Eclipse plugin that calculates a set of software metrics a
+  - Toucing direction button in monitor move pacman according to direction button
+  - Eating bell will make enemy as crying victim so that pacman can eat them, which earn extra 200 points.
+  - Eating seed will make extra 5 score for each seed
+  - Eating life will earn extra life if the number of life was less than 3, otherwise just remain same as 3.
+  - Meeting enemy will be resulted in one lost of life, which will disappear one heart image on the screen. 
+  - Timer is set to 50. Therefore, after 50 seconds, the game over.
+  - If pacman lost it's all lives, the game over. 
