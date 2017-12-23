@@ -29,7 +29,7 @@ How to Start Game
 
 How to Play game
 -------------------
-  - Toucing direction button in monitor move pacman according to direction button
+  - Toucing direction button in monitor move pacman according to direction button
   - Eating bell will make enemy as crying victim so that pacman can eat them, which earn extra 200 points.
   - Eating seed will make extra 5 score for each seed
   - Eating life will earn extra life if the number of life was less than 3, otherwise just remain same as 3.
