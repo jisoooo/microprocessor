@@ -40,7 +40,7 @@ int is_eat_seed();
 int is_eat_bell();
 int is_eat_life();
 int is_collide_wall(int, int);
-int is_collide_enemy();
+int is_collide_enemy(int, int);
 void draw_black();
 void draw_background_initial();
 void draw_num(int row, int col, int num);
@@ -49,5 +49,5 @@ void draw_enemy();
 void erase_one_life();
 void update_score();
 void draw_start_map();
-void draw_timer();
+void draw_timer(unsigned int a);
 #endif

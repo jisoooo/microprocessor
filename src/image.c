@@ -9,6 +9,7 @@
 
 extern int map[20][30];
 extern int start_map[20][30];
+extern int lose[20][30];
 extern unsigned int pac_up[20][20];
 extern unsigned int pac_down[20][20];
 extern unsigned int pac_left[20][20];
@@ -23,9 +24,13 @@ extern unsigned int bell[20][20];
 extern unsigned int life[20][20];
 
 struct player player={1, 1, DOWN, 3, 0};
-struct enemy enemy_Red = {1, 5, 1, DOWN, 0, enemy_red};
+struct enemy enemy_Red = {18, 1, 1, DOWN, 0, enemy_red};
 struct enemy enemy_Green = {1, 10, 1, DOWN, 0,enemy_green};
-struct enemy enemy_Purple = {1, 15, 1, DOWN, 0, enemy_purple};
+struct enemy enemy_Purple = {15, 11, 1, DOWN, 0, enemy_purple};
+
+static int enemy_prev_row[3];
+static int enemy_prev_col[3];
+
 int score = 0;
 bool 	collide = false;
 
@@ -248,7 +253,7 @@ void move_player() {
 	is_eat_bell();
 	is_eat_life();
 	//check collision with enemy
-	is_collide_enemy();
+	is_collide_enemy(prev_row, prev_col);
 	/*draw new location*/
 	draw_player();
 }
@@ -260,10 +265,16 @@ void move_enemy() {
 	int prev_row, prev_col;
 	int i;
 	int value;
+
+
 	for (i = 0; i < enemy_num; i++) {
 		struct enemy *enemy = enemy_arr[i];
+
+		while(1){
 		prev_row = enemy->row;
 		prev_col = enemy->col;
+		enemy_prev_row[i]=prev_row;
+		enemy_prev_col[i]=prev_col;
 		//rand num
 		enemy->state = rand() % 4;
 		printf("rand num %d\n", enemy->state);
@@ -310,11 +321,17 @@ void move_enemy() {
 			}
 		}
 		//if collide wall, cancel movement
-		if (is_collide_wall(enemy->row, enemy->col)) {
-			printf("collide!");
-			enemy->row = prev_row;
-			enemy->col = prev_col;
-		}
+
+			if (is_collide_wall(enemy->row, enemy->col)){
+				printf("collide!");
+				enemy->row = prev_row;
+				enemy->col = prev_col;
+			}
+			else
+				break;
+
+			}
+
 
 		/*draw new location*/
 		draw_enemy();
@@ -446,7 +463,7 @@ void draw_enemy() {
 }
 
 //check collision with enemy
-int is_collide_enemy(){
+int is_collide_enemy(int prev_row, int prev_col){
 	int i;
 	collide = false;
 	struct enemy* enemy_arr [enemy_num] = { &enemy_Green, &enemy_Purple, &enemy_Red };
@@ -458,6 +475,15 @@ int is_collide_enemy(){
 			collide = true;
 			break;
 		}
+		if (enemy_arr[i]->valid &&
+			enemy_prev_col[i] == player.col &&
+			enemy_prev_row[i] == player.row &&
+			prev_row == enemy_arr[i]->row &&
+			prev_col == enemy_arr[i]->col){
+			collide = true;
+			break;
+		}
+
 	}
 
 	if(collide){//collide
@@ -472,9 +498,11 @@ int is_collide_enemy(){
 			printf("colllide->life down\n");
 			player.life--;
 			erase_one_life();
-			if (player.life <= 0)
+			if (player.life <= 0){
 				printf("game over\n");
+				game_over();
 				//game_stop();
+			}
 		}
 	}
 }
@@ -558,8 +586,27 @@ int is_eat_life() {
 	}
 }
 
-void draw_time(int timer) {
+void draw_timer(unsigned int timer){
+	if(timer<=0)
+		timer=0;
 	draw_num(415, 10, timer / 100);
 	draw_num(415, 60, (timer / 10) % 10);
 	draw_num(415, 110, timer % 10);
+
+	if(timer==0){
+		game_over();
+	}
+}
+
+void game_over(){
+ int i,j;
+	disable_interrupts();
+  /*cover whole screen with black*/
+  for (i = 0; i < 20; i++) {
+		for (j = 0; j < 30; j++) {
+      draw_one_block(i, j,lose[i][j]);
+    }
+  }
+
+	exit(0);
 }

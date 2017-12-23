@@ -19,7 +19,7 @@ extern int weak;
 
 static int frame_count=0;
 static int timer_count = 0;
-static unsigned int real_time = 150;
+static unsigned int real_time = 50;
  int touch_valid = 0;
  int touching=0;
  unsigned int touch_x = 0;
